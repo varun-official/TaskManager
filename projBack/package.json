@@ -2,10 +2,10 @@
   "name": "taskapp",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "app.js",
   "scripts": {
-    "start": "./index.js",
-    "dev": "nodemon ./index.js"
+    "start": "./app.js",
+    "dev": "nodemon ./app.js"
   },
   "keywords": [],
   "author": "",
