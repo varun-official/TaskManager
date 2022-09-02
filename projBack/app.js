@@ -3,6 +3,7 @@
 //npm import
 const express = require("express");
 const mongoose = require("mongoose");
+const userRoute = require("./routes/User");
 
 //connection variable
 const app = express();
@@ -18,7 +19,8 @@ mongoose
     console.log("DB Connection established");
   });
 
-// app.use(bodyParser.json());
+app.use(express.json());
+app.use(userRoute);
 
 app.listen(PORT, () => {
   console.log(`App is runing of ${PORT}`);
