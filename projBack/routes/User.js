@@ -23,18 +23,6 @@ routes.get("/users", async (req, res) => {
   }
 });
 
-routes.get("/user/:id", async (req, res) => {
-  const _id = req.params.id;
-  try {
-    const user = await User.findById(_id);
-    if (!user) {
-      return res.status(404).json({ error: "No user found on this id" });
-    }
-    return res.status(200).send(user);
-  } catch (error) {
-    return res.status(500).send(error);
-  }
-});
 
 routes.get("/user/:id", async (req, res) => {
   const _id = req.params.id;

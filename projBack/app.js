@@ -4,6 +4,7 @@
 const express = require("express");
 const mongoose = require("mongoose");
 const userRoute = require("./routes/User");
+const taskRoute = require("./routes/Task");
 
 //connection variable
 const app = express();
@@ -21,6 +22,7 @@ mongoose
 
 app.use(express.json());
 app.use(userRoute);
+app.use(taskRoute);
 
 app.listen(PORT, () => {
   console.log(`App is runing of ${PORT}`);
