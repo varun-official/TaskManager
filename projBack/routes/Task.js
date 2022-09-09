@@ -41,16 +41,14 @@ routes.get("/task/:id", async (req, res) => {
 routes.patch("/task/:id", async (req, res) => {
   const _id = req.params.id;
   const updateTask = req.body;
-
+  const updateitems = Object.keys(updateTask);
   try {
-    const updatedTask = await Task.findByIdAndUpdate(
-      { _id },
-      { $set: updateTask },
-      { new: true, runValidators: true }
-    );
+    const updatedTask = await Task.findById({ _id });
     if (!updatedTask) {
       return res.status(404).json({ error: "Task not found" });
     }
+
+    updateitems.map((item) => (updatedTask[item] = updateTask[item]));
     return res.status(200).send(updatedTask);
   } catch (error) {
     return res.status(500).send(error);

@@ -23,7 +23,6 @@ routes.get("/users", async (req, res) => {
   }
 });
 
-
 routes.get("/user/:id", async (req, res) => {
   const _id = req.params.id;
   try {
@@ -40,18 +39,15 @@ routes.get("/user/:id", async (req, res) => {
 routes.patch("/user/:id", async (req, res) => {
   const _id = req.params.id;
   const update = req.body;
+  const updateitems = Object.keys(update);
   try {
-    const user = await User.findByIdAndUpdate(
-      { _id },
-      { $set: update },
-      {
-        new: true,
-        runValidators: true,
-      }
-    );
+    const user = await User.findById({ _id });
     if (!user) {
       return res.status(404).json({ error: "No user found on this id" });
     }
+    updateitems.map((items) => (user[items] = update[items]));
+    await user.save();
+
     return res.status(200).send(user);
   } catch (error) {
     return res.status(500).send(error);

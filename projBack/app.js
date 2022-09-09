@@ -3,6 +3,7 @@
 //npm import
 const express = require("express");
 const mongoose = require("mongoose");
+const bodyParser = require("body-parser");
 const userRoute = require("./routes/User");
 const taskRoute = require("./routes/Task");
 
@@ -20,7 +21,7 @@ mongoose
     console.log("DB Connection established");
   });
 
-app.use(express.json());
+app.use(bodyParser.json());
 app.use(userRoute);
 app.use(taskRoute);
 
