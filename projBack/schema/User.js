@@ -5,47 +5,58 @@ const validator = require("validator");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 
-const userSchema = mongoose.Schema({
-  name: {
-    type: String,
-    required: true,
-    trim: true,
-  },
-  email: {
-    type: String,
-    required: true,
-    trim: true,
-    lowercase: true,
-    unique: true,
-    validate(value) {
-      if (!validator.isEmail(value)) throw new Error("Not an email address");
+const userSchema = mongoose.Schema(
+  {
+    name: {
+      type: String,
+      required: true,
+      trim: true,
     },
-  },
-  password: {
-    type: String,
-    required: true,
-    minLength: 8,
-    validate(value) {
-      if (value.toLowerCase().includes("password"))
-        throw new Error("Not a valid password");
-    },
-  },
-  age: {
-    type: Number,
-    required: true,
-    trim: true,
-    validate(value) {
-      if (value < 0) throw new Error("Not a real age");
-    },
-  },
-  tokens: [
-    {
-      token: {
-        type: String,
-        required: true,
+    email: {
+      type: String,
+      required: true,
+      trim: true,
+      lowercase: true,
+      unique: true,
+      validate(value) {
+        if (!validator.isEmail(value)) throw new Error("Not an email address");
       },
     },
-  ],
+    password: {
+      type: String,
+      required: true,
+      minLength: 8,
+      validate(value) {
+        if (value.toLowerCase().includes("password"))
+          throw new Error("Not a valid password");
+      },
+    },
+    age: {
+      type: Number,
+      required: true,
+      trim: true,
+      validate(value) {
+        if (value < 0) throw new Error("Not a real age");
+      },
+    },
+    tokens: [
+      {
+        token: {
+          type: String,
+          required: true,
+        },
+      },
+    ],
+  },
+  {
+    timestamps: true,
+  }
+);
+
+userSchema.virtual("task", {
+  ref: "Task",
+  localField: "_id",
+  foreignField: "owner",
 });
 
 userSchema.pre("save", async function (next) {
@@ -58,8 +69,13 @@ userSchema.pre("save", async function (next) {
     return next();
   }
 });
+userSchema.pre("remove", async function (next) {
+  const user = this;
+  await Task.deleteMany({ owner: user._id });
+  next();
+});
 
-userSchema.statics.getUserById = async function (email, password) {
+userSchema.statics.getUserById = async (email, password) => {
   const user = await User.findOne({ email });
 
   if (!user) {
@@ -92,5 +108,5 @@ userSchema.methods = {
     return token;
   },
 };
-
-module.exports = mongoose.model("User", userSchema);
+const User = mongoose.model("User", userSchema);
+module.exports = User;
