@@ -34,13 +34,26 @@ routes.get("/tasks", auth, async (req, res) => {
   }
 
   try {
+    // await req.user
+    //   .populate({
+    //     path: "tasks",
+    //     match,
+    //     options: {
+    //       limit: parseInt(req.query.limit),
+    //       skip: parseInt(req.query.skip),
+    //       sort,
+    //     },
+    //   })
+    //   .execPopulate();
+
+    //(Both are the same)
     const allTask = await Task.find(
       match,
       {},
       {
         limit: parseInt(req.query.limit),
         skip: parseInt(req.query.skip),
-        sort: sort,
+        sort,
       }
     );
     return res.status(200).send(allTask);
