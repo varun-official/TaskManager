@@ -7,16 +7,18 @@ const bodyParser = require("body-parser");
 const userRoute = require("./routes/User");
 const taskRoute = require("./routes/Task");
 
+require("dotenv").config();
+
 //connection variable
 const app = express();
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT;
 
 //DB connection
 mongoose
-  .connect(
-    "mongodb+srv://Varun:jdVZGUfTZqbN8cLe@taskapp.nseppmq.mongodb.net/?retryWrites=true&w=majority",
-    { useNewUrlParser: true, useUnifiedTopology: true }
-  )
+  .connect(process.env.MONGODB_URL, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+  })
   .then(() => {
     console.log("DB Connection established");
   });
