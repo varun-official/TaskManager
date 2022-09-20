@@ -7,11 +7,13 @@ const sharp = require("sharp");
 
 const User = require("../schema/User");
 const auth = require("../middleware/Auth");
+const { signupmail, exitmail } = require("../Email/Sender");
 
 routes.post("/user", async (req, res) => {
   const user = new User(req.body);
   try {
     const newUser = await user.save();
+    await signupmail(newUser.email, newUser.name);
     const token = await newUser.generateToken();
 
     return res.status(201).send({ newUser, token });
@@ -81,10 +83,14 @@ routes.patch("/user/me", auth, async (req, res) => {
 });
 
 routes.delete("/user/me", auth, async (req, res) => {
-  const _id = req.params.id;
+  const _id = req.user._id;
   try {
-    await User.findByIdAndDelete({ _id });
-    return res.status(200).json({ result: "sucessfully deleted" });
+    const deleteduser = await User.findByIdAndDelete({ _id });
+    if (deleteduser) {
+      await exitmail(req.user.email, req.user.name);
+      return res.status(200).json({ result: "sucessfully deleted" });
+    }
+    return res.status(404).send({ error: "Unable to find the userID" });
   } catch (err) {
     return res.status(500).send(err);
   }
